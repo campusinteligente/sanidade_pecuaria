@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Painel{% endblock %} · Gestão Sanitária e Alimentar</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  {% include "_icons.html" %}
+
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <svg class="icon"><use href="#icon-shield"/></svg>
+      <span>Gestão Pecuária</span>
+    </div>
+
+    <p class="sidebar__section-label">Visão geral</p>
+    <ul class="sidebar__nav">
+      <li><a class="sidebar__link {% if active == 'dashboard' %}is-active{% endif %}" href="{% url 'painel:dashboard' %}">
+        <svg class="icon"><use href="#icon-grid"/></svg> Dashboard</a></li>
+      <li><a class="sidebar__link" href="/admin/animais/animal/">
+        <svg class="icon"><use href="#icon-tag"/></svg> Animais</a></li>
+      <li><a class="sidebar__link" href="/admin/animais/setor/">
+        <svg class="icon"><use href="#icon-branch"/></svg> Setores</a></li>
+    </ul>
+
+    <p class="sidebar__section-label">Sanitário</p>
+    <ul class="sidebar__nav">
+      <li><a class="sidebar__link" href="/admin/sanitario/registrosanitario/">
+        <svg class="icon"><use href="#icon-clipboard-pulse"/></svg> Registros sanitários</a></li>
+      <li><a class="sidebar__link" href="/admin/sanitario/ocorrencia/">
+        <svg class="icon"><use href="#icon-alert"/></svg> Ocorrências</a></li>
+      <li><a class="sidebar__link" href="/admin/sanitario/prescricaoveterinaria/">
+        <svg class="icon"><use href="#icon-file-plus"/></svg> Prescrições</a></li>
+      <li><a class="sidebar__link" href="/admin/sanitario/vacinacao/">
+        <svg class="icon"><use href="#icon-droplet"/></svg> Vacinação</a></li>
+      <li><a class="sidebar__link" href="/admin/sanitario/vermifugacao/">
+        <svg class="icon"><use href="#icon-target"/></svg> Vermifugação</a></li>
+      <li><a class="sidebar__link" href="/admin/sanitario/tratamento/">
+        <svg class="icon"><use href="#icon-heart-pulse"/></svg> Tratamentos</a></li>
+      <li><a class="sidebar__link" href="/admin/sanitario/protocolosanitario/">
+        <svg class="icon"><use href="#icon-check-square"/></svg> Protocolos</a></li>
+    </ul>
+
+    <p class="sidebar__section-label">Alimentação</p>
+    <ul class="sidebar__nav">
+      <li><a class="sidebar__link" href="/admin/alimentacao/produtoalimentar/">
+        <svg class="icon"><use href="#icon-basket"/></svg> Produtos</a></li>
+      <li><a class="sidebar__link" href="/admin/alimentacao/alimentacao/">
+        <svg class="icon"><use href="#icon-utensils"/></svg> Alimentação</a></li>
+      <li><a class="sidebar__link" href="/admin/alimentacao/dieta/">
+        <svg class="icon"><use href="#icon-clipboard-list"/></svg> Dietas</a></li>
+    </ul>
+
+    <p class="sidebar__section-label">Sistema</p>
+    <ul class="sidebar__nav">
+      <li><a class="sidebar__link" href="/admin/sanitario/relatoriosanitario/">
+        <svg class="icon"><use href="#icon-bar-chart"/></svg> Relatórios</a></li>
+      <li><a class="sidebar__link" href="/admin/sanitario/logauditoria/">
+        <svg class="icon"><use href="#icon-list"/></svg> Auditoria</a></li>
+      <li><a class="sidebar__link" href="/admin/">
+        <svg class="icon"><use href="#icon-settings"/></svg> Administração</a></li>
+    </ul>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <p class="topbar__title">{% block header_title %}Dashboard{% endblock %}</p>
+        <p class="topbar__subtitle">{% block header_subtitle %}Visão geral do sistema{% endblock %}</p>
+      </div>
+      <div class="topbar__search">
+        <svg class="icon"><use href="#icon-search"/></svg>
+        <span>Buscar animal, registro...</span>
+      </div>
+      <div class="topbar__user">
+        <div class="avatar">
+          {% if request.user.is_authenticated %}{{ request.user.username|slice:":2"|upper }}{% else %}<svg class="icon"><use href="#icon-user"/></svg>{% endif %}
+        </div>
+        <span>{% if request.user.is_authenticated %}{{ request.user.username }}{% else %}Visitante{% endif %}</span>
+      </div>
+    </header>
+
+    <main class="content">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+</body>
+</html>
