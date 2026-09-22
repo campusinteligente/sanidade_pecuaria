@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load common_extras %}
+
+{% block title %}{{ titulo }}{% endblock %}
+{% block header_title %}{{ titulo }}{% endblock %}
+{% block header_subtitle %}Gerencie os registros deste módulo{% endblock %}
+
+{% block content %}
+
+  <div class="crud-toolbar">
+    <form method="get" class="topbar__search crud-toolbar__search">
+      <svg class="icon"><use href="#icon-search"/></svg>
+      <input type="text" name="q" value="{{ termo_busca }}" placeholder="Buscar...">
+    </form>
+    <a class="btn" href="{% url url_basename|add:':criar' %}">
+      <svg class="icon"><use href="#icon-plus"/></svg> Novo
+    </a>
+  </div>
+
+  <div class="panel">
+    <table class="data-table">
+      <thead>
+        <tr>
+          {% for campo, rotulo in list_fields %}<th>{{ rotulo }}</th>{% endfor %}
+          <th style="text-align:right;">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for obj in objetos %}
+        <tr>
+          {% for campo, rotulo in list_fields %}<td>{{ obj|get_attr:campo|default:"—" }}</td>{% endfor %}
+          <td class="crud-actions">
+            <a href="{% url url_basename|add:':editar' obj.pk %}" title="Editar">
+              <svg class="icon"><use href="#icon-edit"/></svg>
+            </a>
+            <a href="{% url url_basename|add:':apagar' obj.pk %}" title="Apagar">
+              <svg class="icon"><use href="#icon-trash"/></svg>
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="{{ list_fields|length|add:1 }}" style="color:var(--color-text-muted);">Nenhum registro encontrado.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if is_paginated %}
+  <div class="pagination">
+    {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}{% if termo_busca %}&q={{ termo_busca }}{% endif %}">« Anterior</a>
+    {% endif %}
+    <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}{% if termo_busca %}&q={{ termo_busca }}{% endif %}">Próxima »</a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+{% endblock %}

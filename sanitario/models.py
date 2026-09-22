@@ -19,8 +19,8 @@ class TipoMedicamento(models.Model):
 class Medicamento(models.Model):
     id_medicamento = models.AutoField(primary_key=True)
     nome = models.CharField(max_length=150)
-    principio_ativo = models.CharField(max_length=150, blank=True)
-    apresentacao = models.CharField(max_length=100, blank=True)
+    principio_ativo = models.CharField(max_length=150, blank=True, verbose_name="Princípio ativo")
+    apresentacao = models.CharField(max_length=100, blank=True, verbose_name="Apresentação")
     tipo_medicamento = models.ForeignKey(
         TipoMedicamento, on_delete=models.SET_NULL, null=True, blank=True, related_name="medicamentos"
     )
@@ -39,7 +39,7 @@ class ViaAdministracao(models.Model):
 
     id_via = models.AutoField(primary_key=True)
     nome = models.CharField(max_length=100)
-    descricao = models.TextField(blank=True)
+    descricao = models.TextField(blank=True, verbose_name="Descrição")
 
     class Meta:
         verbose_name = "Via de Administração"
@@ -54,7 +54,7 @@ class Diagnostico(models.Model):
 
     id_diagnostico = models.AutoField(primary_key=True)
     nome = models.CharField(max_length=150)
-    descricao = models.TextField(blank=True)
+    descricao = models.TextField(blank=True, verbose_name="Descrição")
 
     class Meta:
         verbose_name = "Diagnóstico"
@@ -78,7 +78,7 @@ class RegistroSanitario(models.Model):
     id_registro = models.AutoField(primary_key=True)
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE, related_name="registros_sanitarios")
     data = models.DateField()
-    observacao = models.TextField(blank=True)
+    observacao = models.TextField(blank=True, verbose_name="Observação")
     status = models.CharField(max_length=20, choices=StatusRegistro.choices, default=StatusRegistro.ABERTO)
 
     class Meta:
@@ -96,11 +96,12 @@ class Ocorrencia(models.Model):
     id_ocorrencia = models.AutoField(primary_key=True)
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE, related_name="ocorrencias")
     diagnostico = models.ForeignKey(
-        Diagnostico, on_delete=models.SET_NULL, null=True, blank=True, related_name="ocorrencias"
+        Diagnostico, on_delete=models.SET_NULL, null=True, blank=True, related_name="ocorrencias",
+        verbose_name="Diagnóstico",
     )
     data = models.DateField()
     sintomas = models.TextField()
-    observacao = models.TextField(blank=True)
+    observacao = models.TextField(blank=True, verbose_name="Observação")
 
     class Meta:
         verbose_name = "Ocorrência Sanitária"
@@ -118,9 +119,9 @@ class PrescricaoVeterinaria(models.Model):
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE, related_name="prescricoes")
     data = models.DateField()
     dosagem = models.CharField(max_length=100)
-    frequencia = models.CharField(max_length=100)
-    duracao = models.CharField(max_length=100, blank=True)
-    observacao = models.TextField(blank=True)
+    frequencia = models.CharField(max_length=100, verbose_name="Frequência")
+    duracao = models.CharField(max_length=100, blank=True, verbose_name="Duração")
+    observacao = models.TextField(blank=True, verbose_name="Observação")
 
     class Meta:
         verbose_name = "Prescrição Veterinária"
@@ -138,14 +139,15 @@ class AplicacaoMedicamento(models.Model):
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE, related_name="aplicacoes")
     medicamento = models.ForeignKey(Medicamento, on_delete=models.PROTECT, related_name="aplicacoes")
     via_aplicacao = models.ForeignKey(
-        ViaAdministracao, on_delete=models.SET_NULL, null=True, blank=True, related_name="aplicacoes"
+        ViaAdministracao, on_delete=models.SET_NULL, null=True, blank=True, related_name="aplicacoes",
+        verbose_name="Via de aplicação",
     )
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="aplicacoes"
     )
     data = models.DateField()
     dose = models.CharField(max_length=100)
-    observacao = models.TextField(blank=True)
+    observacao = models.TextField(blank=True, verbose_name="Observação")
 
     class Meta:
         verbose_name = "Aplicação de Medicamento"
@@ -164,7 +166,7 @@ class Vacinacao(models.Model):
     medicamento = models.ForeignKey(Medicamento, on_delete=models.PROTECT, related_name="vacinacoes")
     data = models.DateField()
     dose = models.CharField(max_length=100)
-    proxima_dose = models.DateField(null=True, blank=True)
+    proxima_dose = models.DateField(null=True, blank=True, verbose_name="Próxima dose")
 
     class Meta:
         verbose_name = "Vacinação"
@@ -183,7 +185,7 @@ class Vermifugacao(models.Model):
     medicamento = models.ForeignKey(Medicamento, on_delete=models.PROTECT, related_name="vermifugacoes")
     data = models.DateField()
     dose = models.CharField(max_length=100)
-    proxima_aplicacao = models.DateField(null=True, blank=True)
+    proxima_aplicacao = models.DateField(null=True, blank=True, verbose_name="Próxima aplicação")
 
     class Meta:
         verbose_name = "Vermifugação"
@@ -200,9 +202,10 @@ class Tratamento(models.Model):
     id_tratamento = models.AutoField(primary_key=True)
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE, related_name="tratamentos")
     diagnostico = models.ForeignKey(
-        Diagnostico, on_delete=models.SET_NULL, null=True, blank=True, related_name="tratamentos"
+        Diagnostico, on_delete=models.SET_NULL, null=True, blank=True, related_name="tratamentos",
+        verbose_name="Diagnóstico",
     )
-    data_inicio = models.DateField()
+    data_inicio = models.DateField(verbose_name="Data de início")
     data_fim = models.DateField(null=True, blank=True)
     protocolo = models.CharField(max_length=150, blank=True)
     status = models.CharField(max_length=20, choices=StatusRegistro.choices, default=StatusRegistro.EM_ANDAMENTO)
@@ -223,7 +226,7 @@ class TratamentoMedicamento(models.Model):
     tratamento = models.ForeignKey(Tratamento, on_delete=models.CASCADE, related_name="medicamentos_utilizados")
     medicamento = models.ForeignKey(Medicamento, on_delete=models.PROTECT, related_name="tratamentos_utilizados")
     dose = models.CharField(max_length=100)
-    frequencia = models.CharField(max_length=100)
+    frequencia = models.CharField(max_length=100, verbose_name="Frequência")
 
     class Meta:
         verbose_name = "Medicamento do Tratamento"
@@ -238,7 +241,7 @@ class ProtocoloSanitario(models.Model):
 
     id_protocolo = models.AutoField(primary_key=True)
     nome = models.CharField(max_length=150)
-    descricao = models.TextField(blank=True)
+    descricao = models.TextField(blank=True, verbose_name="Descrição")
     periodicidade = models.CharField(max_length=100, blank=True)
 
     class Meta:
@@ -272,8 +275,8 @@ class HistoricoSanitario(models.Model):
     id_historico = models.AutoField(primary_key=True)
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE, related_name="historico_sanitario")
     data = models.DateField()
-    tipo_evento = models.CharField(max_length=100)
-    descricao = models.TextField(blank=True)
+    tipo_evento = models.CharField(max_length=100, verbose_name="Tipo de evento")
+    descricao = models.TextField(blank=True, verbose_name="Descrição")
 
     class Meta:
         verbose_name = "Histórico Sanitário"
@@ -289,9 +292,9 @@ class RelatorioSanitario(models.Model):
 
     id_relatorio = models.AutoField(primary_key=True)
     tipo = models.CharField(max_length=100)
-    periodo_inicio = models.DateField()
-    periodo_fim = models.DateField()
-    data_geracao = models.DateTimeField(auto_now_add=True)
+    periodo_inicio = models.DateField(verbose_name="Início do período")
+    periodo_fim = models.DateField(verbose_name="Fim do período")
+    data_geracao = models.DateTimeField(auto_now_add=True, verbose_name="Data de geração")
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="relatorios"
     )
@@ -312,9 +315,9 @@ class LogAuditoria(models.Model):
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="logs"
     )
-    acao = models.CharField(max_length=150)
+    acao = models.CharField(max_length=150, verbose_name="Ação")
     data = models.DateTimeField(auto_now_add=True)
-    descricao = models.TextField(blank=True)
+    descricao = models.TextField(blank=True, verbose_name="Descrição")
 
     class Meta:
         verbose_name = "Log de Auditoria"

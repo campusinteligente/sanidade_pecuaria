@@ -8,7 +8,7 @@ class TipoAlimentacao(models.Model):
 
     id_tipo_alimentacao = models.AutoField(primary_key=True)
     nome = models.CharField(max_length=100)
-    descricao = models.TextField(blank=True)
+    descricao = models.TextField(blank=True, verbose_name="Descrição")
 
     class Meta:
         verbose_name = "Tipo de Alimentação"
@@ -44,7 +44,7 @@ class Alimentacao(models.Model):
     produto = models.ForeignKey(ProdutoAlimentar, on_delete=models.PROTECT, related_name="alimentacoes")
     data = models.DateField()
     quantidade = models.DecimalField(max_digits=10, decimal_places=2)
-    observacao = models.TextField(blank=True)
+    observacao = models.TextField(blank=True, verbose_name="Observação")
 
     class Meta:
         verbose_name = "Alimentação"
@@ -78,7 +78,7 @@ class Dieta(models.Model):
 
     id_dieta = models.AutoField(primary_key=True)
     nome = models.CharField(max_length=150)
-    descricao = models.TextField(blank=True)
+    descricao = models.TextField(blank=True, verbose_name="Descrição")
     setor = models.ForeignKey(Setor, on_delete=models.SET_NULL, null=True, blank=True, related_name="dietas")
 
     class Meta:

@@ -1,10 +1,13 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.urls import reverse
 
 from animais.models import Animal, Setor
 from sanitario.models import Ocorrencia, RegistroSanitario, Tratamento, Vacinacao
 from alimentacao.models import ProdutoAlimentar
 
 
+@login_required
 def dashboard(request):
     context = {
         "active": "dashboard",
@@ -17,55 +20,55 @@ def dashboard(request):
                 "titulo": "Registros sanitários",
                 "descricao": "Histórico de saúde por animal",
                 "icone": "icon-clipboard-pulse",
-                "url": "/admin/sanitario/registrosanitario/",
+                "url": reverse('registro_sanitario:listar'),
             },
             {
                 "titulo": "Ocorrências",
                 "descricao": "Sintomas e diagnósticos registrados",
                 "icone": "icon-alert",
-                "url": "/admin/sanitario/ocorrencia/",
+                "url": reverse('ocorrencia:listar'),
             },
             {
                 "titulo": "Prescrições veterinárias",
                 "descricao": "Dosagem, frequência e duração",
                 "icone": "icon-file-plus",
-                "url": "/admin/sanitario/prescricaoveterinaria/",
+                "url": reverse('prescricao:listar'),
             },
             {
                 "titulo": "Vacinação",
                 "descricao": "Doses aplicadas e próxima dose",
                 "icone": "icon-droplet",
-                "url": "/admin/sanitario/vacinacao/",
+                "url": reverse('vacinacao:listar'),
             },
             {
                 "titulo": "Vermifugação",
                 "descricao": "Controle de aplicações e retorno",
                 "icone": "icon-target",
-                "url": "/admin/sanitario/vermifugacao/",
+                "url": reverse('vermifugacao:listar'),
             },
             {
                 "titulo": "Tratamentos",
                 "descricao": "Protocolos e medicamentos utilizados",
                 "icone": "icon-heart-pulse",
-                "url": "/admin/sanitario/tratamento/",
+                "url": reverse('tratamento:listar'),
             },
             {
                 "titulo": "Alimentação",
                 "descricao": "Consumo diário por animal e setor",
                 "icone": "icon-utensils",
-                "url": "/admin/alimentacao/alimentacao/",
+                "url": reverse('alimentacao_registro:listar'),
             },
             {
                 "titulo": "Dietas",
                 "descricao": "Composição de dietas por setor",
                 "icone": "icon-clipboard-list",
-                "url": "/admin/alimentacao/dieta/",
+                "url": reverse('dieta:listar'),
             },
             {
                 "titulo": "Relatórios",
                 "descricao": "Geração de relatórios sanitários",
                 "icone": "icon-bar-chart",
-                "url": "/admin/sanitario/relatoriosanitario/",
+                "url": reverse('relatorio:listar'),
             },
         ],
     }

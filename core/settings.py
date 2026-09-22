@@ -40,12 +40,14 @@ INSTALLED_APPS = [
     'animais',
     'sanitario',
     'alimentacao',
+    'common',
     'painel',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -120,6 +122,12 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# Autenticação: para onde mandar quem tenta acessar uma tela sem estar logado,
+# e para onde ir depois de entrar/sair.
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'painel:dashboard'
+LOGOUT_REDIRECT_URL = 'login'
 
 
 # Email

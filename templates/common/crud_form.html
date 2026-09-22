@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}{{ titulo }}{% endblock %}
+{% block header_title %}{{ titulo }}{% endblock %}
+{% block header_subtitle %}Preencha os campos abaixo{% endblock %}
+
+{% block content %}
+
+  <div class="panel crud-form-panel">
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% for f in form %}
+        <div class="crud-field">
+          <label for="{{ f.id_for_label }}">{{ f.label }}</label>
+          {{ f }}
+          {% if f.errors %}<p class="crud-field__error">{{ f.errors|striptags }}</p>{% endif %}
+          {% if f.help_text %}<p class="crud-field__help">{{ f.help_text }}</p>{% endif %}
+        </div>
+      {% endfor %}
+      <div class="crud-form-actions">
+        <button type="submit" class="btn"><svg class="icon"><use href="#icon-check-circle"/></svg> Salvar</button>
+        <a href="{% url url_basename|add:':listar' %}" class="btn btn--muted">Cancelar</a>
+      </div>
+    </form>
+  </div>
+
+{% endblock %}

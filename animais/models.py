@@ -4,7 +4,7 @@ from django.db import models
 class Setor(models.Model):
     id_setor = models.AutoField(primary_key=True)
     nome = models.CharField(max_length=100)
-    descricao = models.TextField(blank=True)
+    descricao = models.TextField(blank=True, verbose_name="Descrição")
 
     class Meta:
         verbose_name = "Setor"
@@ -22,8 +22,8 @@ class Animal(models.Model):
 
     id_animal = models.AutoField(primary_key=True)
     identificacao = models.CharField(max_length=50, unique=True, help_text="Brinco/registro do animal")
-    especie = models.CharField(max_length=50)
-    raca = models.CharField(max_length=50, blank=True)
+    especie = models.CharField(max_length=50, verbose_name="Espécie")
+    raca = models.CharField(max_length=50, blank=True, verbose_name="Raça")
     data_nascimento = models.DateField(null=True, blank=True)
     sexo = models.CharField(max_length=1, choices=Sexo.choices)
     setor = models.ForeignKey(Setor, on_delete=models.SET_NULL, null=True, blank=True, related_name="animais")

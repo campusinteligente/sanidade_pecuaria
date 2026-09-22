@@ -20,45 +20,53 @@
     <ul class="sidebar__nav">
       <li><a class="sidebar__link {% if active == 'dashboard' %}is-active{% endif %}" href="{% url 'painel:dashboard' %}">
         <svg class="icon"><use href="#icon-grid"/></svg> Dashboard</a></li>
-      <li><a class="sidebar__link" href="/admin/animais/animal/">
+      <li><a class="sidebar__link" href="{% url 'animal:listar' %}">
         <svg class="icon"><use href="#icon-tag"/></svg> Animais</a></li>
-      <li><a class="sidebar__link" href="/admin/animais/setor/">
+      <li><a class="sidebar__link" href="{% url 'setor:listar' %}">
         <svg class="icon"><use href="#icon-branch"/></svg> Setores</a></li>
     </ul>
 
     <p class="sidebar__section-label">Sanitário</p>
     <ul class="sidebar__nav">
-      <li><a class="sidebar__link" href="/admin/sanitario/registrosanitario/">
+      <li><a class="sidebar__link" href="{% url 'registro_sanitario:listar' %}">
         <svg class="icon"><use href="#icon-clipboard-pulse"/></svg> Registros sanitários</a></li>
-      <li><a class="sidebar__link" href="/admin/sanitario/ocorrencia/">
+      <li><a class="sidebar__link" href="{% url 'ocorrencia:listar' %}">
         <svg class="icon"><use href="#icon-alert"/></svg> Ocorrências</a></li>
-      <li><a class="sidebar__link" href="/admin/sanitario/prescricaoveterinaria/">
+      <li><a class="sidebar__link" href="{% url 'prescricao:listar' %}">
         <svg class="icon"><use href="#icon-file-plus"/></svg> Prescrições</a></li>
-      <li><a class="sidebar__link" href="/admin/sanitario/vacinacao/">
+      <li><a class="sidebar__link" href="{% url 'aplicacao:listar' %}">
+        <svg class="icon"><use href="#icon-droplet"/></svg> Aplicações</a></li>
+      <li><a class="sidebar__link" href="{% url 'vacinacao:listar' %}">
         <svg class="icon"><use href="#icon-droplet"/></svg> Vacinação</a></li>
-      <li><a class="sidebar__link" href="/admin/sanitario/vermifugacao/">
+      <li><a class="sidebar__link" href="{% url 'vermifugacao:listar' %}">
         <svg class="icon"><use href="#icon-target"/></svg> Vermifugação</a></li>
-      <li><a class="sidebar__link" href="/admin/sanitario/tratamento/">
+      <li><a class="sidebar__link" href="{% url 'tratamento:listar' %}">
         <svg class="icon"><use href="#icon-heart-pulse"/></svg> Tratamentos</a></li>
-      <li><a class="sidebar__link" href="/admin/sanitario/protocolosanitario/">
+      <li><a class="sidebar__link" href="{% url 'protocolo:listar' %}">
         <svg class="icon"><use href="#icon-check-square"/></svg> Protocolos</a></li>
+      <li><a class="sidebar__link" href="{% url 'diagnostico:listar' %}">
+        <svg class="icon"><use href="#icon-clipboard-pulse"/></svg> Diagnósticos</a></li>
+      <li><a class="sidebar__link" href="{% url 'medicamento:listar' %}">
+        <svg class="icon"><use href="#icon-droplet"/></svg> Medicamentos</a></li>
     </ul>
 
     <p class="sidebar__section-label">Alimentação</p>
     <ul class="sidebar__nav">
-      <li><a class="sidebar__link" href="/admin/alimentacao/produtoalimentar/">
+      <li><a class="sidebar__link" href="{% url 'produto:listar' %}">
         <svg class="icon"><use href="#icon-basket"/></svg> Produtos</a></li>
-      <li><a class="sidebar__link" href="/admin/alimentacao/alimentacao/">
+      <li><a class="sidebar__link" href="{% url 'alimentacao_registro:listar' %}">
         <svg class="icon"><use href="#icon-utensils"/></svg> Alimentação</a></li>
-      <li><a class="sidebar__link" href="/admin/alimentacao/dieta/">
+      <li><a class="sidebar__link" href="{% url 'dieta:listar' %}">
         <svg class="icon"><use href="#icon-clipboard-list"/></svg> Dietas</a></li>
+      <li><a class="sidebar__link" href="{% url 'consumo_setor:listar' %}">
+        <svg class="icon"><use href="#icon-basket"/></svg> Consumo por setor</a></li>
     </ul>
 
     <p class="sidebar__section-label">Sistema</p>
     <ul class="sidebar__nav">
-      <li><a class="sidebar__link" href="/admin/sanitario/relatoriosanitario/">
+      <li><a class="sidebar__link" href="{% url 'relatorio:listar' %}">
         <svg class="icon"><use href="#icon-bar-chart"/></svg> Relatórios</a></li>
-      <li><a class="sidebar__link" href="/admin/sanitario/logauditoria/">
+      <li><a class="sidebar__link" href="{% url 'log_auditoria:listar' %}">
         <svg class="icon"><use href="#icon-list"/></svg> Auditoria</a></li>
       <li><a class="sidebar__link" href="/admin/">
         <svg class="icon"><use href="#icon-settings"/></svg> Administração</a></li>
@@ -80,6 +88,14 @@
           {% if request.user.is_authenticated %}{{ request.user.username|slice:":2"|upper }}{% else %}<svg class="icon"><use href="#icon-user"/></svg>{% endif %}
         </div>
         <span>{% if request.user.is_authenticated %}{{ request.user.username }}{% else %}Visitante{% endif %}</span>
+        {% if request.user.is_authenticated %}
+        <form method="post" action="{% url 'logout' %}" style="margin:0;">
+          {% csrf_token %}
+          <button type="submit" class="sidebar__link" style="background:none; border:none; cursor:pointer; color:var(--color-text-muted); padding:6px;" title="Sair">
+            <svg class="icon"><use href="#icon-logout"/></svg>
+          </button>
+        </form>
+        {% endif %}
       </div>
     </header>
 
