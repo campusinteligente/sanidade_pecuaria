@@ -8,7 +8,7 @@ setor_cfg = CrudConfig(
     verbose_name="Setor",
     verbose_name_plural="Setores",
     icon="icon-branch",
-    list_fields=[("nome", "Nome"), ("descricao", "Descrição")],
+    list_fields=[("nome", "Nome"), ("get_tipo_display", "Tipo de produção"), ("descricao", "Descrição")],
     search_fields=["nome"],
 )
 
@@ -27,6 +27,7 @@ animal_cfg = CrudConfig(
         ("ativo", "Ativo"),
     ],
     search_fields=["identificacao", "especie", "raca"],
+    filtrar_por_setor_da_sessao="setor",
 )
 
 urlpatterns = [

@@ -53,6 +53,9 @@ body {
     position: sticky;
     top: 0;
     height: 100vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
 }
 
 .sidebar__brand {
@@ -507,4 +510,102 @@ form textarea {
     font-size: 0.82rem;
     color: var(--color-text-muted);
     margin: 0 0 22px 0;
+}
+
+/* ---------- Aviso de filtro por setor ---------- */
+.filtro-setor-aviso {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(70, 130, 180, 0.08);
+    border: 1px solid rgba(70, 130, 180, 0.25);
+    color: var(--color-primary);
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+}
+
+.filtro-setor-aviso a {
+    margin-left: auto;
+    color: var(--color-primary);
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+/* ---------- Seletor de setor ativo (sidebar) ---------- */
+.sidebar__setor {
+    padding: 10px 12px;
+    margin: 4px 4px 10px 4px;
+}
+
+.sidebar__setor label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.65);
+    margin-bottom: 6px;
+}
+
+.sidebar__setor select {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-size: 0.82rem;
+}
+
+.sidebar__setor select option {
+    color: var(--color-text);
+}
+
+/* ---------- Logo / marca d'água ---------- */
+.sidebar__watermark {
+    display: flex;
+    justify-content: center;
+    padding: 6px 0 14px 0;
+    opacity: 0.92;
+}
+
+.sidebar__watermark img {
+    width: 76px;
+    height: auto;
+}
+
+/* ---------- Borda infinita (gradiente animado) ---------- */
+.sidebar {
+    position: relative;
+}
+
+.sidebar::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(180deg,
+            #ffffff00 0%,
+            #ffffffcc 15%,
+            #ffffff00 30%,
+            #ffffff00 60%,
+            #ffffffcc 75%,
+            #ffffff00 90%);
+    background-size: 100% 220%;
+    animation: borda-infinita 3.5s linear infinite;
+}
+
+@keyframes borda-infinita {
+    0% {
+        background-position: 0 0%;
+    }
+
+    100% {
+        background-position: 0 220%;
+    }
 }

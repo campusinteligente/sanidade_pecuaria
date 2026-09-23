@@ -7,6 +7,17 @@
 
 {% block content %}
 
+  {% if respeita_filtro_setor and setor_atual %}
+  <div class="filtro-setor-aviso">
+    <svg class="icon"><use href="#icon-branch"/></svg>
+    Mostrando apenas o setor <strong>{{ setor_atual.nome }}</strong>.
+    <a href="{% url 'definir_setor' %}" onclick="event.preventDefault(); document.getElementById('form-limpar-setor').submit();">Ver todos</a>
+    <form id="form-limpar-setor" method="post" action="{% url 'definir_setor' %}" style="display:none;">
+      {% csrf_token %}
+    </form>
+  </div>
+  {% endif %}
+
   <div class="crud-toolbar">
     <form method="get" class="topbar__search crud-toolbar__search">
       <svg class="icon"><use href="#icon-search"/></svg>

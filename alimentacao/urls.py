@@ -60,6 +60,7 @@ consumo_setor_cfg = CrudConfig(
         ("data", "Data"),
         ("quantidade", "Quantidade"),
     ],
+    filtrar_por_setor_da_sessao="setor",
 )
 
 dieta_cfg = CrudConfig(
@@ -70,6 +71,7 @@ dieta_cfg = CrudConfig(
     icon="icon-clipboard-list",
     list_fields=[("nome", "Nome"), ("setor", "Setor")],
     search_fields=["nome"],
+    filtrar_por_setor_da_sessao="setor",
 )
 
 dieta_produto_cfg = CrudConfig(

@@ -16,12 +16,16 @@
       <span>Gestão Pecuária</span>
     </div>
 
+    <div class="sidebar__watermark">
+      <img src="{% static 'img/logo-campus-inteligente.png' %}" alt="Programa Campus Inteligente">
+    </div>
+
     <p class="sidebar__section-label">Visão geral</p>
     <ul class="sidebar__nav">
       <li><a class="sidebar__link {% if active == 'dashboard' %}is-active{% endif %}" href="{% url 'painel:dashboard' %}">
         <svg class="icon"><use href="#icon-grid"/></svg> Dashboard</a></li>
       <li><a class="sidebar__link" href="{% url 'animal:listar' %}">
-        <svg class="icon"><use href="#icon-tag"/></svg> Animais</a></li>
+        <svg class="icon"><use href="#icon-paw"/></svg> Animais</a></li>
       <li><a class="sidebar__link" href="{% url 'setor:listar' %}">
         <svg class="icon"><use href="#icon-branch"/></svg> Setores</a></li>
     </ul>
@@ -49,6 +53,21 @@
       <li><a class="sidebar__link" href="{% url 'medicamento:listar' %}">
         <svg class="icon"><use href="#icon-droplet"/></svg> Medicamentos</a></li>
     </ul>
+
+    <div class="sidebar__setor">
+      <label><svg class="icon icon-sm"><use href="#icon-branch"/></svg> Setor ativo</label>
+      <form method="post" action="{% url 'definir_setor' %}">
+        {% csrf_token %}
+        <select name="setor_id" onchange="this.form.submit()">
+          <option value="">Todos os setores</option>
+          {% for s in setores_disponiveis %}
+            <option value="{{ s.pk }}" {% if setor_atual and setor_atual.pk == s.pk %}selected{% endif %}>
+              {{ s.nome }}{% if s.tipo %} — {{ s.get_tipo_display }}{% endif %}
+            </option>
+          {% endfor %}
+        </select>
+      </form>
+    </div>
 
     <p class="sidebar__section-label">Alimentação</p>
     <ul class="sidebar__nav">

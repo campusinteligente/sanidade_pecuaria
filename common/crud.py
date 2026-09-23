@@ -38,6 +38,7 @@ class CrudConfig:
     form_fields: object = "__all__"
     search_fields: list = field(default_factory=list)
     paginate_by: int = 15
+    filtrar_por_setor_da_sessao: str = ""   # nome do campo FK pra Setor, ex: "setor"
 
 
 def build_crud_urls(config: CrudConfig):
@@ -59,6 +60,11 @@ def build_crud_urls(config: CrudConfig):
                 for campo in config.search_fields:
                     condicao |= Q(**{f"{campo}__icontains": termo})
                 qs = qs.filter(condicao)
+
+            if config.filtrar_por_setor_da_sessao:
+                setor_id = self.request.session.get("setor_id")
+                if setor_id:
+                    qs = qs.filter(**{f"{config.filtrar_por_setor_da_sessao}_id": setor_id})
             return qs
 
         def get_context_data(self, **kwargs):
@@ -69,6 +75,7 @@ def build_crud_urls(config: CrudConfig):
                 list_fields=config.list_fields,
                 url_basename=config.url_basename,
                 termo_busca=self.request.GET.get("q", ""),
+                respeita_filtro_setor=bool(config.filtrar_por_setor_da_sessao),
             )
             return ctx
 

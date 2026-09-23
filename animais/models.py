@@ -2,8 +2,18 @@ from django.db import models
 
 
 class Setor(models.Model):
+    class Tipo(models.TextChoices):
+        BOVINOCULTURA_CORTE = "bovino_corte", "Bovinocultura de corte"
+        BOVINOCULTURA_LEITE = "bovino_leite", "Bovinocultura de leite"
+        CAPRINOCULTURA = "caprinocultura", "Caprinocultura"
+        AVICULTURA = "avicultura", "Avicultura"
+        SUINOCULTURA = "suinocultura", "Suinocultura"
+
     id_setor = models.AutoField(primary_key=True)
     nome = models.CharField(max_length=100)
+    tipo = models.CharField(
+        max_length=20, choices=Tipo.choices, verbose_name="Tipo de produção", blank=True
+    )
     descricao = models.TextField(blank=True, verbose_name="Descrição")
 
     class Meta:

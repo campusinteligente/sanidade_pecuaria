@@ -194,6 +194,7 @@ protocolo_setor_cfg = CrudConfig(
     verbose_name_plural="Protocolos por Setor",
     icon="icon-check-square",
     list_fields=[("protocolo", "Protocolo"), ("setor", "Setor")],
+    filtrar_por_setor_da_sessao="setor",
 )
 
 historico_cfg = CrudConfig(
