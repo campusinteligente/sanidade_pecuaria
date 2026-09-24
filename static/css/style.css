@@ -567,14 +567,42 @@ form textarea {
 /* ---------- Logo / marca d'água ---------- */
 .sidebar__watermark {
     display: flex;
-    justify-content: center;
-    padding: 6px 0 14px 0;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 4px 16px 4px;
     opacity: 0.92;
 }
 
 .sidebar__watermark img {
-    width: 76px;
+    width: 28px;
     height: auto;
+    flex-shrink: 0;
+}
+
+.sidebar__watermark span {
+    font-size: 0.74rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.15;
+}
+
+/* ---------- Rodapé ---------- */
+.app-footer {
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--color-text-muted);
+    opacity: 0.75;
+    padding: 18px 32px 10px 32px;
+}
+
+.app-footer--login {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 18px;
+    color: rgba(255, 255, 255, 0.85);
+    opacity: 1;
 }
 
 /* ---------- Borda infinita (gradiente animado) ---------- */
