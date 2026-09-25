@@ -5,7 +5,8 @@ from .models import Animal, Setor
 
 @admin.register(Setor)
 class SetorAdmin(admin.ModelAdmin):
-    list_display = ("nome", "descricao")
+    list_display = ("nome", "tipo", "descricao")
+    list_filter = ("tipo",)
     search_fields = ("nome",)
 
 

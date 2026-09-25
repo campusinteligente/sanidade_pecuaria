@@ -55,21 +55,6 @@
         <svg class="icon"><use href="#icon-droplet"/></svg> Medicamentos</a></li>
     </ul>
 
-    <div class="sidebar__setor">
-      <label><svg class="icon icon-sm"><use href="#icon-branch"/></svg> Setor ativo</label>
-      <form method="post" action="{% url 'definir_setor' %}">
-        {% csrf_token %}
-        <select name="setor_id" onchange="this.form.submit()">
-          <option value="">Todos os setores</option>
-          {% for s in setores_disponiveis %}
-            <option value="{{ s.pk }}" {% if setor_atual and setor_atual.pk == s.pk %}selected{% endif %}>
-              {{ s.nome }}{% if s.tipo %} — {{ s.get_tipo_display }}{% endif %}
-            </option>
-          {% endfor %}
-        </select>
-      </form>
-    </div>
-
     <p class="sidebar__section-label">Alimentação</p>
     <ul class="sidebar__nav">
       <li><a class="sidebar__link" href="{% url 'produto:listar' %}">
@@ -91,6 +76,26 @@
       <li><a class="sidebar__link" href="/admin/">
         <svg class="icon"><use href="#icon-settings"/></svg> Administração</a></li>
     </ul>
+
+    <div class="sidebar__usuario">
+      <svg class="icon icon-sm"><use href="#icon-user"/></svg>
+      {{ request.user.get_full_name|default:request.user.username }}
+    </div>
+
+    <div class="sidebar__setor">
+      <label><svg class="icon icon-sm"><use href="#icon-branch"/></svg> Setor ativo</label>
+      <form method="post" action="{% url 'definir_setor' %}">
+        {% csrf_token %}
+        <select name="setor_id" onchange="this.form.submit()">
+          <option value="">Todos os setores</option>
+          {% for s in setores_disponiveis %}
+            <option value="{{ s.pk }}" {% if setor_atual and setor_atual.pk == s.pk %}selected{% endif %}>
+              {{ s.nome }}{% if s.tipo %} — {{ s.get_tipo_display }}{% endif %}
+            </option>
+          {% endfor %}
+        </select>
+      </form>
+    </div>
   </aside>
 
   <div class="main">

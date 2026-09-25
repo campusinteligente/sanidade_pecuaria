@@ -536,7 +536,19 @@ form textarea {
 /* ---------- Seletor de setor ativo (sidebar) ---------- */
 .sidebar__setor {
     padding: 10px 12px;
-    margin: 4px 4px 10px 4px;
+    margin: 0 4px 4px 4px;
+}
+
+.sidebar__usuario {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 14px 4px 0 4px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #fff;
 }
 
 .sidebar__setor label {
