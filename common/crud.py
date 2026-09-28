@@ -11,19 +11,25 @@ from dataclasses import dataclass, field
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
-from django.forms import ModelChoiceField
+from django.forms import ChoiceField, ModelChoiceField
 from django.urls import include, path, reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
 
 def _traduzir_campos_selecao(form):
     """O Django 6.1 usa por padrão o texto em inglês '- Select an option -'
-    nos campos de chave estrangeira, e essa string ainda não tem tradução
-    pt-br no pacote. Trocamos aqui para não aparecer em inglês no formulário.
+    nos campos de seleção (chave estrangeira e CharField com choices), e
+    essa string ainda não tem tradução pt-br no pacote. Trocamos aqui para
+    não aparecer em inglês no formulário.
     """
-    for bound_field in form.fields.values():
-        if isinstance(bound_field, ModelChoiceField):
-            bound_field.empty_label = "Selecione..."
+    for campo in form.fields.values():
+        if isinstance(campo, ModelChoiceField):
+            campo.empty_label = "Selecione..."
+        elif isinstance(campo, ChoiceField):
+            campo.choices = [
+                (valor, "Selecione...") if valor == "" else (valor, rotulo)
+                for valor, rotulo in campo.choices
+            ]
     return form
 
 
