@@ -3,7 +3,8 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f766e">
   <title>{% block title %}Painel{% endblock %} · Gestão Sanitária e Alimentar</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,7 +14,9 @@
 <body>
   {% include "_icons.html" %}
 
-  <aside class="sidebar">
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <aside class="sidebar" id="sidebar">
     <div class="sidebar__brand">
       <svg class="icon"><use href="#icon-shield"/></svg>
       <span>Gestão Pecuária</span>
@@ -103,6 +106,9 @@
 
   <div class="main">
     <header class="topbar">
+      <button type="button" class="mobile-topbar__menu" id="btn-abrir-menu" aria-label="Abrir menu">
+        <svg class="icon"><use href="#icon-menu"/></svg>
+      </button>
       <div>
         <p class="topbar__title">{% block header_title %}Dashboard{% endblock %}</p>
         <p class="topbar__subtitle">{% block header_subtitle %}Visão geral do sistema{% endblock %}</p>
@@ -135,6 +141,67 @@
       © 2026 Campus Inteligente - Sistema de Sanidade Pecuária
     </footer>
   </div>
+
+  <nav class="bottom-nav" id="bottom-nav">
+    <a class="bottom-nav__link {% if active == 'dashboard' %}is-active{% endif %}" href="{% url 'painel:dashboard' %}">
+      <span class="icon-wrap"><svg class="icon"><use href="#icon-grid"/></svg></span>
+      Início
+    </a>
+    <a class="bottom-nav__link" href="{% url 'animal:listar' %}">
+      <span class="icon-wrap"><svg class="icon"><use href="#icon-paw"/></svg></span>
+      Animais
+    </a>
+    <a class="bottom-nav__link" href="{% url 'registro_sanitario:listar' %}">
+      <span class="icon-wrap"><svg class="icon"><use href="#icon-clipboard-pulse"/></svg></span>
+      Sanitário
+    </a>
+    <a class="bottom-nav__link" href="{% url 'alimentacao_registro:listar' %}">
+      <span class="icon-wrap"><svg class="icon"><use href="#icon-utensils"/></svg></span>
+      Alimentação
+    </a>
+    <button type="button" class="bottom-nav__link" id="btn-abrir-menu-inferior">
+      <span class="icon-wrap"><svg class="icon"><use href="#icon-menu"/></svg></span>
+      Menu
+    </button>
+  </nav>
+
+  <script>
+    (function () {
+      var sidebar = document.getElementById('sidebar');
+      var overlay = document.getElementById('sidebar-overlay');
+
+      function abrirMenu() {
+        sidebar.classList.add('is-open');
+        overlay.classList.add('is-open');
+      }
+      function fecharMenu() {
+        sidebar.classList.remove('is-open');
+        overlay.classList.remove('is-open');
+      }
+
+      var btnTopo = document.getElementById('btn-abrir-menu');
+      var btnInferior = document.getElementById('btn-abrir-menu-inferior');
+      if (btnTopo) btnTopo.addEventListener('click', abrirMenu);
+      if (btnInferior) btnInferior.addEventListener('click', abrirMenu);
+      overlay.addEventListener('click', fecharMenu);
+
+      // Fecha a gaveta ao navegar para algum link do menu lateral
+      sidebar.querySelectorAll('a').forEach(function (link) {
+        link.addEventListener('click', fecharMenu);
+      });
+
+      // Marca como ativo o link (sidebar e barra inferior) cujo destino
+      // corresponde ao início do caminho atual da URL.
+      var caminhoAtual = window.location.pathname;
+      document.querySelectorAll('.sidebar__link, .bottom-nav__link').forEach(function (link) {
+        var destino = link.getAttribute('href');
+        if (!destino || destino === '/') return;
+        if (caminhoAtual.indexOf(destino) === 0) {
+          link.classList.add('is-active');
+        }
+      });
+    })();
+  </script>
 
 </body>
 </html>
