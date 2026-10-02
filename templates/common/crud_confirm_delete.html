@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Apagar {{ titulo }}{% endblock %}
+{% block header_title %}Apagar {{ titulo }}{% endblock %}
+{% block header_subtitle %}Esta ação não pode ser desfeita{% endblock %}
+
+{% block content %}
+
+  <div class="panel crud-form-panel">
+    <p>Tem certeza que deseja apagar <strong>{{ object }}</strong>?</p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="crud-form-actions">
+        <button type="submit" class="btn btn--danger">
+          <svg class="icon"><use href="#icon-trash"/></svg> Apagar
+        </button>
+        <a href="{% url url_basename|add:':listar' %}" class="btn btn--muted">Cancelar</a>
+      </div>
+    </form>
+  </div>
+
+{% endblock %}
