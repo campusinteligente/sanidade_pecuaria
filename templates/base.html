@@ -31,6 +31,8 @@
     <ul class="sidebar__nav">
       <li><a class="sidebar__link {% if active == 'dashboard' %}is-active{% endif %}" href="{% url 'painel:dashboard' %}">
         <svg class="icon"><use href="#icon-grid"/></svg> Dashboard</a></li>
+      <li><a class="sidebar__link {% if active == 'ocorrencias_recentes' %}is-active{% endif %}" href="{% url 'painel:ocorrencias_recentes' %}">
+        <svg class="icon"><use href="#icon-clock"/></svg> Ocorrências recentes</a></li>
       <li><a class="sidebar__link" href="{% url 'animal:listar' %}">
         <svg class="icon"><use href="#icon-paw"/></svg> Animais</a></li>
       <li><a class="sidebar__link" href="{% url 'setor:listar' %}">

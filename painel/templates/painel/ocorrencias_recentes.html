@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Ocorrências Recentes{% endblock %}
+{% block header_title %}Ocorrências Recentes{% endblock %}
+{% block header_subtitle %}Acompanhamento e histórico das ocorrências sanitárias{% endblock %}
+
+{% block content %}
+
+  {% if setor_atual %}
+  <div class="filtro-setor-aviso">
+    <svg class="icon"><use href="#icon-branch"/></svg>
+    Mostrando ocorrências do setor <strong>{{ setor_atual.nome }}</strong>.
+    <a href="{% url 'definir_setor' %}" onclick="event.preventDefault(); document.getElementById('form-limpar-setor').submit();">Ver todos os setores</a>
+    <form id="form-limpar-setor" method="post" action="{% url 'definir_setor' %}" style="display:none;">
+      {% csrf_token %}
+    </form>
+  </div>
+  {% endif %}
+
+  <div class="stat-grid" style="margin-bottom: 24px;">
+    <div class="stat-card">
+      <div class="stat-card__icon stat-card__icon--danger"><svg class="icon"><use href="#icon-alert"/></svg></div>
+      <p class="stat-card__value">{{ total_ocorrencias }}</p>
+      <p class="stat-card__label">Total de ocorrências</p>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__icon stat-card__icon--success"><svg class="icon"><use href="#icon-check-circle"/></svg></div>
+      <p class="stat-card__value">{{ com_diagnostico }}</p>
+      <p class="stat-card__label">Com diagnóstico</p>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__icon stat-card__icon--warning"><svg class="icon"><use href="#icon-clock"/></svg></div>
+      <p class="stat-card__value">{{ sem_diagnostico }}</p>
+      <p class="stat-card__label">Aguardando diagnóstico</p>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card__icon stat-card__icon--info"><svg class="icon"><use href="#icon-paw"/></svg></div>
+      <p class="stat-card__value">{{ animais_afetados }}</p>
+      <p class="stat-card__label">Animais afetados</p>
+    </div>
+  </div>
+
+  <div class="crud-toolbar">
+    <form method="get" class="topbar__search crud-toolbar__search">
+      <svg class="icon"><use href="#icon-search"/></svg>
+      <input type="text" name="q" value="{{ termo_busca }}" placeholder="Buscar por animal, sintoma ou diagnóstico...">
+    </form>
+    <div style="display:flex; gap:10px;">
+      <a class="btn" href="{% url 'ocorrencia:criar' %}">
+        <svg class="icon"><use href="#icon-plus"/></svg> Nova ocorrência
+      </a>
+      <a class="btn" href="{% url 'ocorrencia:listar' %}" style="background:var(--color-surface); color:var(--color-text); border:1px solid var(--color-border);" title="Gerenciamento completo de ocorrências">
+        <svg class="icon"><use href="#icon-list"/></svg> Gerenciar
+      </a>
+    </div>
+  </div>
+
+  <div class="panel">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Animal</th>
+          <th>Setor</th>
+          <th>Data</th>
+          <th>Diagnóstico</th>
+          <th>Sintomas</th>
+          <th>Observação</th>
+          <th style="text-align:right;">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in objetos %}
+        <tr>
+          <td>
+            <strong>{{ o.animal.identificacao }}</strong>
+            {% if o.animal.especie %}
+              <span style="display:block; font-size:0.75rem; color:var(--color-text-muted);">{{ o.animal.especie }}{% if o.animal.raca %} · {{ o.animal.raca }}{% endif %}</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if o.animal.setor %}
+              <span class="badge" style="background:rgba(59, 130, 246, 0.1); color:#2563eb; border:1px solid rgba(59, 130, 246, 0.25);">
+                <svg class="icon icon-sm"><use href="#icon-branch"/></svg> {{ o.animal.setor.nome }}
+              </span>
+            {% else %}
+              <span style="color:var(--color-text-muted);">—</span>
+            {% endif %}
+          </td>
+          <td>{{ o.data|date:"d/m/Y" }}</td>
+          <td>
+            {% if o.diagnostico %}
+              <span class="badge" style="background:rgba(22, 163, 74, 0.12); color:#16a34a; border:1px solid rgba(22, 163, 74, 0.25);">
+                <svg class="icon icon-sm"><use href="#icon-check-circle"/></svg> {{ o.diagnostico.nome }}
+              </span>
+            {% else %}
+              <span class="badge" style="background:rgba(234, 179, 8, 0.12); color:#ca8a04; border:1px solid rgba(234, 179, 8, 0.3);">
+                <svg class="icon icon-sm"><use href="#icon-clock"/></svg> Em avaliação
+              </span>
+            {% endif %}
+          </td>
+          <td>{{ o.sintomas|truncatechars:80 }}</td>
+          <td>{{ o.observacao|default:"—"|truncatechars:50 }}</td>
+          <td class="crud-actions" style="text-align:right;">
+            <a href="{% url 'ocorrencia:editar' o.pk %}" title="Editar ocorrência">
+              <svg class="icon"><use href="#icon-edit"/></svg>
+            </a>
+            <a href="{% url 'ocorrencia:apagar' o.pk %}" title="Excluir ocorrência">
+              <svg class="icon"><use href="#icon-trash"/></svg>
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align:center; padding:36px 16px; color:var(--color-text-muted);">
+            <svg class="icon" style="width:36px; height:36px; margin-bottom:8px; opacity:0.5;"><use href="#icon-check-circle"/></svg>
+            <p style="margin:0; font-size:0.95rem; font-weight:500;">Nenhuma ocorrência encontrada.</p>
+            <p style="margin:4px 0 0 0; font-size:0.82rem;">Todas as ocorrências sanitárias estão em dia ou não correspondem ao filtro.</p>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if is_paginated %}
+  <div class="pagination">
+    {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}{% if termo_busca %}&q={{ termo_busca }}{% endif %}">« Anterior</a>
+    {% endif %}
+    <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}{% if termo_busca %}&q={{ termo_busca }}{% endif %}">Próxima »</a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+{% endblock %}

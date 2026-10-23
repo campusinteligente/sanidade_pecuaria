@@ -22,11 +22,11 @@
       <p class="stat-card__value">{{ tratamentos_em_andamento }}</p>
       <p class="stat-card__label">Tratamentos em andamento</p>
     </div>
-    <div class="stat-card">
+    <a class="stat-card" href="{% url 'painel:ocorrencias_recentes' %}" style="text-decoration:none; color:inherit; cursor:pointer;" title="Acessar ocorrências recentes">
       <div class="stat-card__icon stat-card__icon--danger"><svg class="icon"><use href="#icon-alert"/></svg></div>
-      <p class="stat-card__value">{{ ocorrencias_recentes|length }}</p>
+      <p class="stat-card__value">{{ total_ocorrencias }}</p>
       <p class="stat-card__label">Ocorrências recentes</p>
-    </div>
+    </a>
   </div>
 
   <h2 class="section-title"><svg class="icon"><use href="#icon-grid"/></svg> Módulos do sistema</h2>
@@ -38,32 +38,6 @@
         <p class="module-card__desc">{{ m.descricao }}</p>
       </a>
     {% endfor %}
-  </div>
-
-  <h2 class="section-title" style="margin-top:28px;"><svg class="icon"><use href="#icon-clock"/></svg> Ocorrências recentes</h2>
-  <div class="panel">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Animal</th>
-          <th>Data</th>
-          <th>Diagnóstico</th>
-          <th>Sintomas</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for o in ocorrencias_recentes %}
-        <tr>
-          <td>{{ o.animal }}</td>
-          <td>{{ o.data|date:"d/m/Y" }}</td>
-          <td>{% if o.diagnostico %}<span class="badge"><svg class="icon icon-sm"><use href="#icon-check-circle"/></svg> {{ o.diagnostico }}</span>{% else %}—{% endif %}</td>
-          <td>{{ o.sintomas|truncatechars:60 }}</td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="4" style="color:var(--color-text-muted);">Nenhuma ocorrência registrada ainda.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
   </div>
 
 {% endblock %}
