@@ -16,15 +16,36 @@ class SetorLoginView(LoginView):
 
     def form_valid(self, form):
         user = form.get_user()
-        auth_login(self.request, user)
 
-        # 1. Se o usuário tiver um perfil com setor vinculado (ex: Caprinocultura),
-        # vincula obrigatoriamente a sessão a esse setor
+        setor_login = self.request.POST.get("setor_login", "").strip()
+
+        # Usuário com setor fixo no perfil
         if hasattr(user, "perfil") and user.perfil.setor_id:
-            self.request.session["setor_id"] = str(user.perfil.setor_id)
+            setor_fixo_id = str(user.perfil.setor_id)
+
+            # Tentou selecionar um setor diferente do seu → barra o acesso
+            if setor_login and setor_login != setor_fixo_id:
+                from animais.models import Setor as SetorModel
+                try:
+                    setor_tentado = SetorModel.objects.get(pk=setor_login)
+                    nome_tentado = setor_tentado.nome
+                except SetorModel.DoesNotExist:
+                    nome_tentado = "desconhecido"
+
+                form.add_error(
+                    None,
+                    f'Seu usuário não está cadastrado no setor "{nome_tentado}". '
+                    f'Você só pode acessar o setor "{user.perfil.setor.nome}".',
+                )
+                return self.form_invalid(form)
+
+            # Setor correto ou sem seleção → vincula o setor fixo
+            auth_login(self.request, user)
+            self.request.session["setor_id"] = setor_fixo_id
+
         else:
-            # 2. Se for um usuário geral/administrador, permite escolher o setor no login
-            setor_login = self.request.POST.get("setor_login", "").strip()
+            # Usuário geral/administrador → pode escolher qualquer setor
+            auth_login(self.request, user)
             if setor_login:
                 self.request.session["setor_id"] = setor_login
             else:
