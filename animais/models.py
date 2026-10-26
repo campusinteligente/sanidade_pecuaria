@@ -46,3 +46,30 @@ class Animal(models.Model):
 
     def __str__(self):
         return self.identificacao
+
+
+class PerfilUsuario(models.Model):
+    user = models.OneToOneField(
+        "auth.User",
+        on_delete=models.CASCADE,
+        related_name="perfil",
+        verbose_name="Usuário",
+    )
+    setor = models.ForeignKey(
+        Setor,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="usuarios",
+        verbose_name="Setor vinculado",
+        help_text="Setor exclusivo deste usuário. Se definido, o usuário terá acesso restrito somente a este setor.",
+    )
+
+    class Meta:
+        verbose_name = "Perfil de Usuário"
+        verbose_name_plural = "Perfis de Usuários"
+
+    def __str__(self):
+        setor_nome = self.setor.nome if self.setor else "Acesso Geral (Todos os setores)"
+        return f"{self.user.username} — {setor_nome}"
+

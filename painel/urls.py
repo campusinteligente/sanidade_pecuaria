@@ -6,4 +6,5 @@ app_name = "painel"
 
 urlpatterns = [
     path("", views.dashboard, name="dashboard"),
+    path("ocorrencias-recentes/", views.ocorrencias_recentes, name="ocorrencias_recentes"),
 ]

@@ -48,6 +48,22 @@
         </div>
       </div>
 
+      <div class="login-field">
+        <label for="id_setor">Setor</label>
+        <div class="login-input">
+          <svg class="icon"><use href="#icon-branch"/></svg>
+          <select name="setor_login" id="id_setor" class="login-select">
+            <option value="">Acesso pelo perfil do usuário</option>
+            {% for s in setores %}
+              <option value="{{ s.pk }}">{{ s.nome }}{% if s.get_tipo_display %} — {{ s.get_tipo_display }}{% endif %}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <small class="login-field__hint">
+          Usuários vinculados a um setor fixo entrarão diretamente em sua tela exclusiva.
+        </small>
+      </div>
+
       <input type="hidden" name="next" value="{{ next }}">
       <button type="submit" class="btn">
         <svg class="icon"><use href="#icon-login"/></svg> Entrar

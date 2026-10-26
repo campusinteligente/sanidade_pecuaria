@@ -1,3 +1,4 @@
+from django.urls import include, path
 from common.crud import CrudConfig, crud_path
 
 from .models import (
@@ -234,6 +235,8 @@ log_auditoria_cfg = CrudConfig(
     search_fields=["acao"],
 )
 
+from .relatorios import central_relatorios
+
 urlpatterns = [
     crud_path("tipos-medicamento/", tipo_medicamento_cfg),
     crud_path("medicamentos/", medicamento_cfg),
@@ -250,6 +253,9 @@ urlpatterns = [
     crud_path("protocolos/", protocolo_cfg),
     crud_path("protocolos-setor/", protocolo_setor_cfg),
     crud_path("historico-sanitario/", historico_cfg),
-    crud_path("relatorios/", relatorio_cfg),
+    path(
+        "relatorios/",
+        include(([path("", central_relatorios, name="listar")], "relatorio"), namespace="relatorio"),
+    ),
     crud_path("auditoria/", log_auditoria_cfg),
 ]
