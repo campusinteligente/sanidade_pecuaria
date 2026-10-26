@@ -611,6 +611,12 @@ form textarea {
     margin: 0 0 18px 0;
 }
 
+.login-card__error--setor {
+    background: rgba(217, 119, 6, 0.18);
+    border: 1px solid rgba(253, 186, 116, 0.4);
+    color: #fde68a;
+}
+
 .login-field {
     margin-bottom: 18px;
 }

@@ -20,7 +20,14 @@
       <p class="login-card__subtitle">Sistema de Sanidade Pecuária</p>
     </div>
 
-    {% if form.errors %}
+    {% if form.non_field_errors %}
+      {% for erro in form.non_field_errors %}
+        <p class="login-card__error login-card__error--setor">
+          <svg class="icon" style="vertical-align:-3px; margin-right:6px;"><use href="#icon-branch"/></svg>
+          {{ erro }}
+        </p>
+      {% endfor %}
+    {% elif form.errors %}
       <p class="login-card__error">Usuário ou senha inválidos. Tente novamente.</p>
     {% endif %}
 
