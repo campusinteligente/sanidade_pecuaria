@@ -67,21 +67,46 @@ def build_crud_urls(config: CrudConfig):
                     condicao |= Q(**{f"{campo}__icontains": termo})
                 qs = qs.filter(condicao)
 
-            if config.filtrar_por_setor_da_sessao:
+            setor_id = None
+            if hasattr(self.request.user, "perfil") and self.request.user.perfil.setor_id:
+                setor_id = self.request.user.perfil.setor_id
+            else:
                 setor_id = self.request.session.get("setor_id")
-                if setor_id:
-                    qs = qs.filter(**{f"{config.filtrar_por_setor_da_sessao}_id": setor_id})
+
+            if setor_id:
+                campo_setor = config.filtrar_por_setor_da_sessao
+                if not campo_setor:
+                    field_names = [f.name for f in config.model._meta.get_fields()]
+                    if "setor" in field_names:
+                        campo_setor = "setor"
+                    elif "animal" in field_names:
+                        campo_setor = "animal__setor"
+                    elif "dieta" in field_names:
+                        campo_setor = "dieta__setor"
+                    elif "tratamento" in field_names:
+                        campo_setor = "tratamento__animal__setor"
+
+                if campo_setor:
+                    try:
+                        qs = qs.filter(**{f"{campo_setor}_id": setor_id})
+                    except Exception:
+                        pass
             return qs
 
         def get_context_data(self, **kwargs):
             ctx = super().get_context_data(**kwargs)
+            respeita_filtro = bool(config.filtrar_por_setor_da_sessao)
+            if not respeita_filtro:
+                field_names = [f.name for f in config.model._meta.get_fields()]
+                respeita_filtro = any(f in field_names for f in ("setor", "animal", "dieta", "tratamento"))
+
             ctx.update(
                 titulo=config.verbose_name_plural,
                 icone=config.icon,
                 list_fields=config.list_fields,
                 url_basename=config.url_basename,
                 termo_busca=self.request.GET.get("q", ""),
-                respeita_filtro_setor=bool(config.filtrar_por_setor_da_sessao),
+                respeita_filtro_setor=respeita_filtro,
             )
             return ctx
 
@@ -92,7 +117,48 @@ def build_crud_urls(config: CrudConfig):
         success_url = reverse_lazy(list_url_name)
 
         def get_form(self, form_class=None):
-            return _traduzir_campos_selecao(super().get_form(form_class))
+            form = _traduzir_campos_selecao(super().get_form(form_class))
+            setor_id = None
+            if hasattr(self.request.user, "perfil") and self.request.user.perfil.setor_id:
+                setor_id = self.request.user.perfil.setor_id
+            else:
+                setor_id = self.request.session.get("setor_id")
+
+            if setor_id:
+                if "setor" in form.fields:
+                    form.fields["setor"].initial = setor_id
+                    if hasattr(self.request.user, "perfil") and self.request.user.perfil.setor_id:
+                        from animais.models import Setor
+                        form.fields["setor"].queryset = Setor.objects.filter(pk=setor_id)
+                        form.fields["setor"].empty_label = None
+
+                if "animal" in form.fields:
+                    from animais.models import Animal
+                    form.fields["animal"].queryset = Animal.objects.filter(setor_id=setor_id, ativo=True)
+
+                if "dieta" in form.fields:
+                    from alimentacao.models import Dieta
+                    form.fields["dieta"].queryset = Dieta.objects.filter(setor_id=setor_id)
+
+                if "tratamento" in form.fields:
+                    from sanitario.models import Tratamento
+                    form.fields["tratamento"].queryset = Tratamento.objects.filter(animal__setor_id=setor_id)
+
+            return form
+
+        def form_valid(self, form):
+            setor_id = None
+            if hasattr(self.request.user, "perfil") and self.request.user.perfil.setor_id:
+                setor_id = self.request.user.perfil.setor_id
+            else:
+                setor_id = self.request.session.get("setor_id")
+
+            if setor_id and hasattr(form.instance, "setor_id") and not form.instance.setor_id:
+                try:
+                    form.instance.setor_id = int(setor_id)
+                except (ValueError, TypeError):
+                    pass
+            return super().form_valid(form)
 
         def get_context_data(self, **kwargs):
             ctx = super().get_context_data(**kwargs)
@@ -110,7 +176,33 @@ def build_crud_urls(config: CrudConfig):
         success_url = reverse_lazy(list_url_name)
 
         def get_form(self, form_class=None):
-            return _traduzir_campos_selecao(super().get_form(form_class))
+            form = _traduzir_campos_selecao(super().get_form(form_class))
+            setor_id = None
+            if hasattr(self.request.user, "perfil") and self.request.user.perfil.setor_id:
+                setor_id = self.request.user.perfil.setor_id
+            else:
+                setor_id = self.request.session.get("setor_id")
+
+            if setor_id:
+                if "setor" in form.fields:
+                    if hasattr(self.request.user, "perfil") and self.request.user.perfil.setor_id:
+                        from animais.models import Setor
+                        form.fields["setor"].queryset = Setor.objects.filter(pk=setor_id)
+                        form.fields["setor"].empty_label = None
+
+                if "animal" in form.fields:
+                    from animais.models import Animal
+                    form.fields["animal"].queryset = Animal.objects.filter(setor_id=setor_id)
+
+                if "dieta" in form.fields:
+                    from alimentacao.models import Dieta
+                    form.fields["dieta"].queryset = Dieta.objects.filter(setor_id=setor_id)
+
+                if "tratamento" in form.fields:
+                    from sanitario.models import Tratamento
+                    form.fields["tratamento"].queryset = Tratamento.objects.filter(animal__setor_id=setor_id)
+
+            return form
 
         def get_context_data(self, **kwargs):
             ctx = super().get_context_data(**kwargs)

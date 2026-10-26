@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-2o6&=$+2u^xza54s0$l44lp(hc!_o5v%2#n4pk!4yx-i7ew8hs
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -87,23 +87,9 @@ DATABASES = {
 }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
-
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+# Validação de senha desabilitada intencionalmente:
+# os usuários são cadastrados manualmente no admin com senhas simples (ex: ifsuldeminas).
+AUTH_PASSWORD_VALIDATORS = []
 
 
 # Internationalization
@@ -139,3 +125,5 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

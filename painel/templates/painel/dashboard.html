@@ -14,8 +14,10 @@
     </div>
     <div class="stat-card">
       <div class="stat-card__icon stat-card__icon--info"><svg class="icon"><use href="#icon-branch"/></svg></div>
-      <p class="stat-card__value">{{ total_setores }}</p>
-      <p class="stat-card__label">Setores cadastrados</p>
+      <p class="stat-card__value" style="font-size:1.35rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="{{ setor_atual.nome|default:'Todos os setores' }}">
+        {{ setor_atual.nome|default:"Todos os setores" }}
+      </p>
+      <p class="stat-card__label">Setor ativo {% if setor_atual.get_tipo_display %}· {{ setor_atual.get_tipo_display }}{% endif %}</p>
     </div>
     <div class="stat-card">
       <div class="stat-card__icon stat-card__icon--warning"><svg class="icon"><use href="#icon-heart-pulse"/></svg></div>

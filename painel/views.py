@@ -11,7 +11,11 @@ from alimentacao.models import ProdutoAlimentar
 
 @login_required
 def dashboard(request):
-    setor_id = request.session.get("setor_id")
+    setor_id = None
+    if hasattr(request.user, "perfil") and request.user.perfil.setor_id:
+        setor_id = request.user.perfil.setor_id
+    else:
+        setor_id = request.session.get("setor_id")
 
     animais_qs = Animal.objects.filter(ativo=True)
     tratamentos_qs = Tratamento.objects.filter(status="em_andamento")
@@ -90,7 +94,11 @@ def dashboard(request):
 
 @login_required
 def ocorrencias_recentes(request):
-    setor_id = request.session.get("setor_id")
+    setor_id = None
+    if hasattr(request.user, "perfil") and request.user.perfil.setor_id:
+        setor_id = request.user.perfil.setor_id
+    else:
+        setor_id = request.session.get("setor_id")
 
     qs = Ocorrencia.objects.select_related("animal", "animal__setor", "diagnostico").order_by("-data", "-id_ocorrencia")
 

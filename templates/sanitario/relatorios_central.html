@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}Central de Relatórios{% endblock %}
+{% block header_title %}Central de Relatórios{% endblock %}
+{% block header_subtitle %}Geração, visualização e exportação de relatórios em PDF e Planilha (Excel){% endblock %}
+
+{% block content %}
+
+  {% if setor_atual %}
+  <div class="filtro-setor-aviso" style="margin-bottom: 20px;">
+    <svg class="icon"><use href="#icon-branch"/></svg>
+    Relatório contextualizado para o setor <strong>{{ setor_atual.nome }}</strong>.
+    {% if not setor_fixo %}
+      <a href="{% url 'definir_setor' %}" onclick="event.preventDefault(); document.getElementById('form-limpar-setor').submit();">Ver todos os setores</a>
+      <form id="form-limpar-setor" method="post" action="{% url 'definir_setor' %}" style="display:none;">
+        {% csrf_token %}
+      </form>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <!-- Seleção Rápida de Módulos de Relatório -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 22px;">
+    <a href="?tipo=ocorrencias{% if setor_id_selecionado %}&setor_id={{ setor_id_selecionado }}{% endif %}&data_inicio={{ data_inicio }}&data_fim={{ data_fim }}"
+       class="stat-card" style="text-decoration:none; padding:14px; border-left: 4px solid {% if tipo_selecionado == 'ocorrencias' %}var(--color-primary){% else %}transparent{% endif %}; background:{% if tipo_selecionado == 'ocorrencias' %}var(--color-surface){% else %}var(--color-surface){% endif %};">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="stat-card__icon stat-card__icon--danger" style="width:34px; height:34px; margin:0; font-size:0.9rem;">
+          <svg class="icon"><use href="#icon-alert"/></svg>
+        </div>
+        <div>
+          <strong style="font-size:0.88rem; color:var(--color-text); display:block;">Ocorrências</strong>
+          <span style="font-size:0.75rem; color:var(--color-text-muted);">Sintomas e diagnósticos</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="?tipo=animais{% if setor_id_selecionado %}&setor_id={{ setor_id_selecionado }}{% endif %}"
+       class="stat-card" style="text-decoration:none; padding:14px; border-left: 4px solid {% if tipo_selecionado == 'animais' %}var(--color-primary){% else %}transparent{% endif %};">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="stat-card__icon stat-card__icon--success" style="width:34px; height:34px; margin:0; font-size:0.9rem;">
+          <svg class="icon"><use href="#icon-paw"/></svg>
+        </div>
+        <div>
+          <strong style="font-size:0.88rem; color:var(--color-text); display:block;">Rebanho</strong>
+          <span style="font-size:0.75rem; color:var(--color-text-muted);">Inventário de animais</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="?tipo=tratamentos{% if setor_id_selecionado %}&setor_id={{ setor_id_selecionado }}{% endif %}&data_inicio={{ data_inicio }}&data_fim={{ data_fim }}"
+       class="stat-card" style="text-decoration:none; padding:14px; border-left: 4px solid {% if tipo_selecionado == 'tratamentos' %}var(--color-primary){% else %}transparent{% endif %};">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="stat-card__icon stat-card__icon--warning" style="width:34px; height:34px; margin:0; font-size:0.9rem;">
+          <svg class="icon"><use href="#icon-heart-pulse"/></svg>
+        </div>
+        <div>
+          <strong style="font-size:0.88rem; color:var(--color-text); display:block;">Tratamentos</strong>
+          <span style="font-size:0.75rem; color:var(--color-text-muted);">Histórico veterinário</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="?tipo=vacinacoes{% if setor_id_selecionado %}&setor_id={{ setor_id_selecionado }}{% endif %}&data_inicio={{ data_inicio }}&data_fim={{ data_fim }}"
+       class="stat-card" style="text-decoration:none; padding:14px; border-left: 4px solid {% if tipo_selecionado == 'vacinacoes' %}var(--color-primary){% else %}transparent{% endif %};">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="stat-card__icon" style="width:34px; height:34px; margin:0; font-size:0.9rem; background:#3b82f6;">
+          <svg class="icon"><use href="#icon-droplet"/></svg>
+        </div>
+        <div>
+          <strong style="font-size:0.88rem; color:var(--color-text); display:block;">Imunização</strong>
+          <span style="font-size:0.75rem; color:var(--color-text-muted);">Vacinas e vermífugos</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="?tipo=alimentacao{% if setor_id_selecionado %}&setor_id={{ setor_id_selecionado }}{% endif %}&data_inicio={{ data_inicio }}&data_fim={{ data_fim }}"
+       class="stat-card" style="text-decoration:none; padding:14px; border-left: 4px solid {% if tipo_selecionado == 'alimentacao' %}var(--color-primary){% else %}transparent{% endif %};">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="stat-card__icon" style="width:34px; height:34px; margin:0; font-size:0.9rem; background:#f59e0b;">
+          <svg class="icon"><use href="#icon-utensils"/></svg>
+        </div>
+        <div>
+          <strong style="font-size:0.88rem; color:var(--color-text); display:block;">Alimentação</strong>
+          <span style="font-size:0.75rem; color:var(--color-text-muted);">Consumo e dietas</span>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <!-- Painel de Filtros e Ações de Exportação -->
+  <div class="panel" style="padding: 20px 24px; margin-bottom: 24px; background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-card);">
+    <form method="get" id="form-relatorio">
+      <input type="hidden" name="tipo" value="{{ tipo_selecionado }}">
+      <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; justify-content: space-between;">
+        
+        <div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: center;">
+          {% if not setor_fixo %}
+          <div>
+            <label style="display:block; font-size:0.78rem; font-weight:600; color:var(--color-text-muted); margin-bottom:6px;">Setor</label>
+            <select name="setor_id" class="input-select" style="padding:8px 12px; border-radius:var(--radius-btn); border:1px solid var(--color-border); font-size:0.88rem; background:var(--color-bg); color:var(--color-text);">
+              <option value="">Todos os setores</option>
+              {% for s in setores %}
+                <option value="{{ s.pk }}" {% if setor_id_selecionado|stringformat:"s" == s.pk|stringformat:"s" %}selected{% endif %}>
+                  {{ s.nome }}{% if s.get_tipo_display %} ({{ s.get_tipo_display }}){% endif %}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+          {% endif %}
+
+          {% if tipo_selecionado != 'animais' %}
+          <div>
+            <label style="display:block; font-size:0.78rem; font-weight:600; color:var(--color-text-muted); margin-bottom:6px;">Data Inicial</label>
+            <input type="date" name="data_inicio" value="{{ data_inicio }}" style="padding:7px 12px; border-radius:var(--radius-btn); border:1px solid var(--color-border); font-size:0.88rem; background:var(--color-bg); color:var(--color-text);">
+          </div>
+          <div>
+            <label style="display:block; font-size:0.78rem; font-weight:600; color:var(--color-text-muted); margin-bottom:6px;">Data Final</label>
+            <input type="date" name="data_fim" value="{{ data_fim }}" style="padding:7px 12px; border-radius:var(--radius-btn); border:1px solid var(--color-border); font-size:0.88rem; background:var(--color-bg); color:var(--color-text);">
+          </div>
+          {% endif %}
+
+          <button type="submit" class="btn" style="height:38px; display:inline-flex; align-items:center; gap:6px; margin-top:auto;">
+            <svg class="icon"><use href="#icon-search"/></svg> Atualizar Visualização
+          </button>
+        </div>
+
+        <!-- Botões de Exportação -->
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <button type="submit" name="formato" value="pdf" class="btn" style="background: #dc2626; color: #fff; height:38px; display:inline-flex; align-items:center; gap:6px; font-weight:600;" title="Baixar relatório em arquivo PDF">
+            <svg class="icon"><use href="#icon-file-plus"/></svg> Exportar em PDF
+          </button>
+
+          <button type="submit" name="formato" value="excel" class="btn" style="background: #15803d; color: #fff; height:38px; display:inline-flex; align-items:center; gap:6px; font-weight:600;" title="Baixar relatório em planilha Excel (.xlsx)">
+            <svg class="icon"><use href="#icon-bar-chart"/></svg> Exportar Planilha (Excel)
+          </button>
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+  <!-- Indicadores Resumidos (KPIs) -->
+  {% if kpis %}
+  <div class="stat-grid" style="margin-bottom: 24px;">
+    {% for rotulo, valor in kpis %}
+      <div class="stat-card" style="padding: 16px 20px;">
+        <p class="stat-card__value" style="font-size: 1.6rem; margin-bottom: 4px;">{{ valor }}</p>
+        <p class="stat-card__label" style="font-size: 0.8rem;">{{ rotulo }}</p>
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Prévia do Relatório -->
+  <div class="panel">
+    <div style="display:flex; justify-content:space-between; align-items:center; padding: 16px 20px; border-bottom: 1px solid var(--color-border);">
+      <div>
+        <h3 style="margin:0; font-size:1.1rem; color:var(--color-text);">{{ titulo_relatorio }}</h3>
+        <p style="margin:2px 0 0 0; font-size:0.8rem; color:var(--color-text-muted);">
+          Setor: <strong>{{ setor_atual.nome|default:"Todos os setores" }}</strong>
+          {% if tipo_selecionado != 'animais' %}· Período de <strong>{{ data_inicio|slice:":10" }}</strong> até <strong>{{ data_fim|slice:":10" }}</strong>{% endif %}
+        </p>
+      </div>
+      <span class="badge" style="background: rgba(15, 118, 110, 0.12); color: var(--color-primary); font-weight: 600; padding: 4px 10px;">
+        {{ total_registros }} registro(s)
+      </span>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          {% for col in colunas %}
+            <th>{{ col }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for linha in dados %}
+        <tr>
+          {% for valor in linha %}
+            <td>{{ valor }}</td>
+          {% endfor %}
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="{{ colunas|length }}" style="text-align:center; padding:36px 16px; color:var(--color-text-muted);">
+            <svg class="icon" style="width:36px; height:36px; margin-bottom:8px; opacity:0.5;"><use href="#icon-bar-chart"/></svg>
+            <p style="margin:0; font-size:0.95rem; font-weight:500;">Nenhum dado encontrado para os filtros selecionados.</p>
+            <p style="margin:4px 0 0 0; font-size:0.82rem;">Tente ajustar o intervalo de datas ou o setor para visualizar registros.</p>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Histórico de Relatórios Gerados Recentemente -->
+  {% if historico_recente %}
+  <div style="margin-top: 32px;">
+    <h3 class="section-title" style="font-size:1rem; margin-bottom:12px;">
+      <svg class="icon"><use href="#icon-clock"/></svg> Histórico recente de relatórios emitidos
+    </h3>
+    <div class="panel" style="background:var(--color-surface);">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Tipo / Título</th>
+            <th>Período</th>
+            <th>Data de Emissão</th>
+            <th>Operador</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for h in historico_recente %}
+          <tr>
+            <td><strong>{{ h.tipo }}</strong></td>
+            <td>{{ h.periodo_inicio|date:"d/m/Y" }} até {{ h.periodo_fim|date:"d/m/Y" }}</td>
+            <td>{{ h.data_geracao|date:"d/m/Y H:i" }}</td>
+            <td>{{ h.usuario|default:"Sistema" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+{% endblock %}
