@@ -6,18 +6,7 @@
 
 {% block content %}
 
-  {% if setor_atual %}
-  <div class="filtro-setor-aviso">
-    <svg class="icon"><use href="#icon-branch"/></svg>
-    Mostrando ocorrências do setor <strong>{{ setor_atual.nome }}</strong>.
-    {% if not setor_fixo %}
-      <a href="{% url 'definir_setor' %}" onclick="event.preventDefault(); document.getElementById('form-limpar-setor').submit();">Ver todos os setores</a>
-      <form id="form-limpar-setor" method="post" action="{% url 'definir_setor' %}" style="display:none;">
-        {% csrf_token %}
-      </form>
-    {% endif %}
-  </div>
-  {% endif %}
+
 
   <div class="stat-grid" style="margin-bottom: 24px;">
     <div class="stat-card">
